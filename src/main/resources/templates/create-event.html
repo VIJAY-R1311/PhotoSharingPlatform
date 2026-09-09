@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Create Event | PhotoShare</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+
+    <style>
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            background: #f4f7fc;
+            color: #334155;
+            font-family:
+                    Inter,
+                    system-ui,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    "Segoe UI",
+                    sans-serif;
+        }
+
+        .create-event-page {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 70px 20px;
+        }
+
+        .event-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 13px;
+            padding: 28px;
+            box-shadow: 0 5px 18px rgba(15, 23, 42, 0.055);
+        }
+
+        .event-card h1 {
+            margin: 0 0 6px;
+            color: #172554;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .event-subtitle {
+            margin: 0 0 25px;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            color: #172554;
+            font-size: 0.88rem;
+            font-weight: 650;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 11px 12px;
+            background: white;
+            color: #334155;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: border-color 0.2s ease,
+            box-shadow 0.2s ease;
+        }
+
+        .form-group input {
+            height: 44px;
+        }
+
+        .form-group textarea {
+            min-height: 130px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3b73ed;
+            box-shadow: 0 0 0 2px rgba(59, 115, 237, 0.12);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #94a3b8;
+        }
+
+        .create-button {
+            width: 100%;
+            border: none;
+            border-radius: 8px;
+            padding: 11px 18px;
+            background: #3b73ed;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 650;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .create-button:hover {
+            background: #2563eb;
+        }
+
+        @media (max-width: 600px) {
+
+            .create-event-page {
+                padding: 40px 15px;
+            }
+
+            .event-card {
+                padding: 22px;
+            }
+
+            .event-card h1 {
+                font-size: 24px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<main class="create-event-page">
+
+    <div class="event-card">
+
+        <h1>
+            Create Event
+        </h1>
+
+        <p class="event-subtitle">
+            Add the basic details for your photography event.
+        </p>
+
+
+        <form th:action="@{/admin/create-event}"
+              th:object="${event}"
+              method="post">
+
+
+            <div class="form-group">
+
+                <label for="eventName">
+                    Event Name
+                </label>
+
+                <input type="text"
+                       id="eventName"
+                       th:field="*{name}"
+                       placeholder="Example: Arjun & Priya Wedding"
+                       required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="description">
+                    Description
+                </label>
+
+                <textarea id="description"
+                          th:field="*{description}"
+                          placeholder="Enter event details"></textarea>
+
+            </div>
+
+
+            <button type="submit"
+                    class="create-button">
+                Create Event
+            </button>
+
+        </form>
+
+    </div>
+
+</main>
+
+</body>
+
+</html>

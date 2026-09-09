@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Manage Gallery | PhotoShare</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+
+    <style>
+
+        .gallery-page {
+            max-width: 1100px;
+            margin: auto;
+            padding: 25px 20px 40px;
+        }
+
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .gallery-header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .gallery-header p {
+            margin: 4px 0 0;
+            color: #64748b;
+        }
+
+        .summary {
+            display: flex;
+            gap: 25px;
+            padding: 12px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            color: #64748b;
+        }
+
+        .summary strong {
+            color: #0f172a;
+        }
+
+        .gallery-card {
+            background: white;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, .05);
+        }
+
+        .gallery-card h2 {
+            margin: 0 0 5px;
+            font-size: 19px;
+        }
+
+        .card-text {
+            color: #64748b;
+            margin: 0 0 15px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .published {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .draft {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .not-created {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .top-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .info-box {
+            background: #fff;
+        }
+
+        .link-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .link-input {
+            flex: 1;
+            min-width: 0;
+            padding: 9px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            background: #f8fafc;
+        }
+
+        .pin-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .pin {
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: #4f46e5;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .photo {
+            height: 170px;
+            overflow: hidden;
+            border-radius: 9px;
+            position: relative;
+            background: #f1f5f9;
+        }
+
+        .photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .selected {
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            padding: 4px 7px;
+            border-radius: 12px;
+            background: #16a34a;
+            color: white;
+            font-size: 10px;
+        }
+
+        .btn {
+            padding: 8px 13px;
+            border-radius: 7px;
+            border: 0;
+            font-weight: 600;
+        }
+
+        .bottom {
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        .alert {
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        @media (max-width: 800px) {
+
+            .top-info {
+                grid-template-columns: 1fr;
+            }
+
+            .photo-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 550px) {
+
+            .gallery-header {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .summary {
+                gap: 15px;
+                flex-wrap: wrap;
+            }
+
+            .link-row {
+                flex-direction: column;
+            }
+
+            .photo-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<nav class="navbar app-navbar">
+
+    <div class="container"
+         style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+
+        <a class="brand"
+           th:href="@{/admin/dashboard}">
+            📸 PhotoShare
+        </a>
+
+        <div style="display: flex; align-items: center; gap: 24px; margin-left: auto; white-space: nowrap;">
+
+            <a class="nav-link"
+               th:href="@{/admin/dashboard}">
+                ← Dashboard
+            </a>
+
+            <a class="nav-link"
+               th:href="@{/admin/event/{id}/photos(id=${event.id})}">
+                Review Photos
+            </a>
+
+            <form th:action="@{/logout}"
+                  method="post"
+                  style="margin: 0;">
+
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}">
+
+                <button type="submit"
+                        class="btn btn-outline-light btn-sm">
+                    Logout
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<main class="gallery-page">
+
+
+    <!-- HEADER -->
+
+    <div class="gallery-header">
+
+        <div>
+
+            <h1>
+                Manage Gallery
+            </h1>
+
+            <p th:text="${event.name}">
+                Event Name
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- MESSAGES -->
+
+    <div th:if="${successMessage}"
+         class="alert success"
+         th:text="${successMessage}">
+        Success
+    </div>
+
+    <div th:if="${errorMessage}"
+         class="alert error"
+         th:text="${errorMessage}">
+        Error
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="summary">
+
+        <span>
+
+            <strong th:text="${selectedPhotos.size()}">
+                0
+            </strong>
+
+            Selected Photos
+
+        </span>
+
+
+        <span th:if="${gallery == null}">
+
+            <strong>
+                Not Created
+            </strong>
+
+            Gallery
+
+        </span>
+
+
+        <span th:if="${gallery != null and gallery.published}">
+
+            <strong>
+                Published
+            </strong>
+
+            Gallery
+
+        </span>
+
+
+        <span th:if="${gallery != null and !gallery.published}">
+
+            <strong>
+                Draft
+            </strong>
+
+            Gallery
+
+        </span>
+
+    </div>
+
+
+    <!-- CREATE GALLERY -->
+
+    <div class="gallery-card"
+         th:if="${gallery == null}">
+
+        <h2>
+            Create Customer Gallery
+        </h2>
+
+        <p class="card-text">
+            Set a 4–6 digit PIN for the customer gallery.
+        </p>
+
+
+        <form th:action="@{/admin/event/{id}/gallery/create(id=${event.id})}"
+              method="post">
+
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+
+
+            <div class="d-flex gap-2">
+
+                <input type="password"
+                       name="pin"
+                       class="form-control"
+                       placeholder="4–6 digit PIN"
+                       minlength="4"
+                       maxlength="6"
+                       pattern="[0-9]{4,6}"
+                       inputmode="numeric"
+                       required>
+
+
+                <button type="submit"
+                        class="btn btn-primary">
+                    Create Gallery
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- PUBLISH -->
+
+    <div class="gallery-card"
+         th:if="${gallery != null and !gallery.published}">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <div>
+
+                <h2>
+                    Publish Gallery
+                </h2>
+
+                <p class="card-text mb-0">
+                    Make the selected photos available to customers.
+                </p>
+
+            </div>
+
+
+            <form th:action="@{/admin/event/{id}/gallery/publish(id=${event.id})}"
+                  method="post">
+
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}">
+
+                <button type="submit"
+                        class="btn btn-primary"
+                        th:disabled="${selectedPhotos.size() == 0}">
+                    Publish
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <small th:if="${selectedPhotos.size() == 0}"
+               class="text-muted">
+            Select at least one photo first.
+        </small>
+
+    </div>
+
+
+    <!-- CUSTOMER GALLERY -->
+
+    <div class="gallery-card"
+         th:if="${gallery != null and gallery.published}">
+
+        <h2>
+            Customer Gallery
+        </h2>
+
+        <p class="card-text">
+            Share the link and PIN with your customer.
+        </p>
+
+
+        <div class="link-row">
+
+            <input id="galleryLink"
+                   class="link-input"
+                   type="text"
+                   readonly
+                   th:attr="data-gallery-path=@{/gallery/{token}(token=${gallery.galleryToken})}">
+
+
+            <button type="button"
+                    class="btn btn-secondary"
+                    onclick="copyGalleryLink(this)">
+                Copy Link
+            </button>
+
+
+            <a th:href="@{/gallery/{token}(token=${gallery.galleryToken})}"
+               target="_blank"
+               class="btn btn-primary">
+                Open
+            </a>
+
+        </div>
+
+
+        <div class="pin-row">
+
+            <span>
+                Customer PIN
+            </span>
+
+            <span class="pin"
+                  th:text="${gallery.pin}">
+                0000
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- SELECTED PHOTOS -->
+
+    <div class="gallery-card">
+
+        <h2>
+            Selected Photos
+        </h2>
+
+
+        <p th:if="${selectedPhotos.size() == 0}"
+           class="card-text">
+            No photos selected yet.
+        </p>
+
+
+        <div class="photo-grid"
+             th:if="${selectedPhotos.size() > 0}">
+
+            <div class="photo"
+                 th:each="photo : ${selectedPhotos}">
+
+                <img th:src="${photo.storageLocation}"
+                     th:alt="${photo.fileName}">
+
+                <span class="selected">
+                    ✓ Selected
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- REVIEW PHOTOS -->
+
+    <div class="bottom">
+
+        <a th:href="@{/admin/event/{id}/photos(id=${event.id})}"
+           class="btn btn-secondary">
+            ← Review Event Photos
+        </a>
+
+    </div>
+
+</main>
+
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const input =
+            document.getElementById("galleryLink");
+
+        if (input) {
+
+            input.value =
+                window.location.origin +
+                input.dataset.galleryPath;
+
+        }
+
+    });
+
+
+    function copyGalleryLink(button) {
+
+        const input =
+            document.getElementById("galleryLink");
+
+        navigator.clipboard.writeText(input.value)
+            .then(function () {
+
+                button.innerText = "Copied!";
+
+                setTimeout(function () {
+
+                    button.innerText = "Copy Link";
+
+                }, 1500);
+
+            });
+
+    }
+
+</script>
+
+</body>
+
+</html>

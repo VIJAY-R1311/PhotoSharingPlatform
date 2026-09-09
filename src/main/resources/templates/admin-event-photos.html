@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${event.name} + ' | Review Photos'">
+        Review Photos | PhotoShare
+    </title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+
+    <style>
+
+        .review-page {
+            max-width: 1150px;
+            margin: auto;
+            padding: 25px 20px 40px;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 18px 0 22px;
+        }
+
+        .review-header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .review-header p {
+            margin: 5px 0 0;
+            color: #64748b;
+        }
+
+        .selected-count {
+            color: #64748b;
+        }
+
+        .selected-count strong {
+            color: #0f172a;
+            font-size: 20px;
+        }
+
+        .photos {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+        }
+
+        .photo-card {
+            overflow: hidden;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, .05);
+        }
+
+        .photo-image {
+            position: relative;
+            height: 190px;
+            background: #f1f5f9;
+        }
+
+        .photo-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .selected-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            background: #16a34a;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .photo-info {
+            padding: 12px;
+        }
+
+        .photo-date {
+            display: block;
+            margin: 3px 0 10px;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .photo-info button {
+            width: 100%;
+            padding: 7px 10px;
+            border-radius: 7px;
+            border: 0;
+            font-weight: 600;
+        }
+
+        .select-btn {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .remove-btn {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .bottom-action {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 900px) {
+
+            .photos {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+        }
+
+        @media (max-width: 650px) {
+
+            .photos {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .review-header {
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+        }
+
+        @media (max-width: 450px) {
+
+            .photos {
+                grid-template-columns: 1fr;
+            }
+
+            .review-header {
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<nav class="navbar app-navbar">
+
+    <div class="container"
+         style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+
+        <a class="brand"
+           th:href="@{/admin/dashboard}">
+            📸 PhotoShare
+        </a>
+
+        <div style="display: flex; align-items: center; gap: 24px; margin-left: auto; white-space: nowrap;">
+
+            <a class="nav-link"
+               th:href="@{/admin/dashboard}">
+                ← Dashboard
+            </a>
+
+            <a class="nav-link"
+               th:href="@{/admin/event/{id}/gallery(id=${event.id})}">
+                Manage Gallery
+            </a>
+
+            <form th:action="@{/logout}"
+                  method="post"
+                  style="margin: 0;">
+
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}">
+
+                <button type="submit"
+                        class="btn btn-outline-light btn-sm">
+                    Logout
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<main class="review-page">
+
+
+    <div class="review-header">
+
+        <div>
+
+            <h1 th:text="${event.name}">
+                Event Name
+            </h1>
+
+            <p>
+                Select the photos you want to share with the customer.
+            </p>
+
+        </div>
+
+        <div class="selected-count">
+
+            <strong th:text="${selectedCount}">
+                0
+            </strong>
+
+            selected
+
+        </div>
+
+    </div>
+
+
+    <!-- EMPTY STATE -->
+
+    <div th:if="${#lists.isEmpty(photos)}"
+         class="empty-state">
+
+        <h3>
+            No photos uploaded
+        </h3>
+
+        <p>
+            Team members haven't uploaded any photos for this event yet.
+        </p>
+
+    </div>
+
+
+    <!-- PHOTO GRID -->
+
+    <div th:unless="${#lists.isEmpty(photos)}"
+         class="photos">
+
+        <div th:each="photo : ${photos}"
+             class="photo-card">
+
+            <div class="photo-image">
+
+                <img th:src="${photo.storageLocation}"
+                     th:alt="${photo.fileName}">
+
+                <span th:if="${photo.selected}"
+                      class="selected-badge">
+                    ✓ Selected
+                </span>
+
+            </div>
+
+
+            <div class="photo-info">
+
+                <div class="fw-semibold text-truncate"
+                     th:text="${photo.fileName}">
+                    photo.jpg
+                </div>
+
+                <small class="photo-date"
+                       th:text="${photo.createdAt}">
+                    Date
+                </small>
+
+
+                <form th:action="@{/admin/photo/{id}/toggle(id=${photo.id})}"
+                      method="post">
+
+                    <input type="hidden"
+                           name="eventId"
+                           th:value="${event.id}">
+
+                    <input type="hidden"
+                           th:name="${_csrf.parameterName}"
+                           th:value="${_csrf.token}">
+
+                    <button type="submit"
+                            th:class="${photo.selected}
+                                ? 'remove-btn'
+                                : 'select-btn'">
+
+                        <span th:if="${photo.selected}">
+                            Remove
+                        </span>
+
+                        <span th:unless="${photo.selected}">
+                            Select
+                        </span>
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- NEXT ACTION -->
+
+    <div th:unless="${#lists.isEmpty(photos)}"
+         class="bottom-action">
+
+        <a th:href="@{/admin/event/{id}/gallery(id=${event.id})}"
+           class="btn btn-primary">
+            Manage Gallery →
+        </a>
+
+    </div>
+
+</main>
+
+</body>
+
+</html>

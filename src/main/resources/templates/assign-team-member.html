@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Assign Team Member | PhotoShare</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+
+    <style>
+        body.assign-page-body {
+            min-height: 100vh;
+            background: #f4f7fc;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body.assign-page-body::before {
+            content: "";
+            position: fixed;
+            width: 330px;
+            height: 330px;
+            border-radius: 50%;
+            background: #dbe7ff;
+            top: -150px;
+            left: -120px;
+            z-index: -1;
+        }
+
+        body.assign-page-body::after {
+            content: "";
+            position: fixed;
+            width: 360px;
+            height: 360px;
+            border-radius: 50%;
+            background: #e7edff;
+            right: -180px;
+            bottom: -180px;
+            z-index: -1;
+        }
+
+        .assign-navbar {
+            background: #17233d;
+            min-height: 72px;
+        }
+
+        .assign-navbar .container {
+            min-height: 72px;
+        }
+
+        .assign-brand {
+            color: white;
+            font-size: 1.35rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .assign-brand:hover {
+            color: white;
+        }
+
+        .assign-nav {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .assign-nav a {
+            color: #e2e8f0;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .assign-nav a:hover {
+            color: white;
+        }
+
+        .assign-logout {
+            background: transparent;
+            color: white;
+            border: 1px solid #94a3b8;
+            border-radius: 7px;
+            padding: 8px 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .assign-logout:hover {
+            background: rgba(255,255,255,0.08);
+        }
+
+        .assign-page {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+
+        .back-link {
+            color: #64748b;
+            font-size: 0.9rem;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            color: #334155;
+        }
+
+        .assign-heading {
+            margin-top: 18px;
+            margin-bottom: 25px;
+        }
+
+        .assign-heading h1 {
+            color: #172554;
+            font-size: 2.2rem;
+            font-weight: 750;
+            margin: 0;
+        }
+
+        .event-name {
+            color: #64748b;
+            margin: 7px 0 0;
+        }
+
+        .assign-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 13px;
+            padding: 24px;
+            box-shadow: 0 5px 18px rgba(15, 23, 42, 0.055);
+        }
+
+        .assign-card h2 {
+            color: #172554;
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .assign-description {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .assign-form {
+            display: flex;
+            gap: 10px;
+            align-items: end;
+        }
+
+        .member-field {
+            flex: 1;
+        }
+
+        .member-field label {
+            display: block;
+            color: #172554;
+            font-size: 0.85rem;
+            font-weight: 650;
+            margin-bottom: 6px;
+        }
+
+        .member-field select {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 10px 11px;
+            background: white;
+            color: #334155;
+        }
+
+        .member-field select:focus {
+            outline: none;
+            border-color: #3b73ed;
+            box-shadow: 0 0 0 2px rgba(59, 115, 237, 0.12);
+        }
+
+        .assign-button {
+            border: none;
+            background: #3b73ed;
+            color: white;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-size: 0.9rem;
+            font-weight: 650;
+            white-space: nowrap;
+        }
+
+        .assign-button:hover {
+            background: #2563eb;
+        }
+
+        .add-member-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-top: 17px;
+            padding-top: 17px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .add-member-text {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        .add-member-button {
+            background: #eef2ff;
+            color: #3730a3;
+            border: 1px solid #c7d2fe;
+            border-radius: 8px;
+            padding: 8px 13px;
+            font-size: 0.85rem;
+            font-weight: 650;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .add-member-button:hover {
+            background: #e0e7ff;
+            color: #312e81;
+        }
+
+        @media (max-width: 700px) {
+            .assign-nav {
+                gap: 12px;
+            }
+
+            .assign-nav a {
+                font-size: 0.82rem;
+            }
+
+            .assign-page {
+                padding: 35px 15px;
+            }
+
+            .assign-heading h1 {
+                font-size: 1.8rem;
+            }
+
+            .assign-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .assign-button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 450px) {
+            .assign-brand {
+                font-size: 1.05rem;
+            }
+
+            .assign-nav a:first-child,
+            .assign-nav a:nth-child(2) {
+                display: none;
+            }
+
+            .add-member-section {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body class="assign-page-body">
+
+<nav class="assign-navbar">
+
+    <div class="container d-flex justify-content-between align-items-center">
+
+        <a class="assign-brand"
+           th:href="@{/admin/dashboard}">
+            📸 PhotoShare
+        </a>
+
+        <div class="assign-nav">
+
+            <a th:href="@{/admin/dashboard}">
+                ← Dashboard
+            </a>
+
+            <a th:href="@{/admin/event/{id}/photos(id=${event.id})}">
+                Review Photos
+            </a>
+
+            <a th:href="@{/admin/event/{id}/gallery(id=${event.id})}">
+                Manage Gallery
+            </a>
+
+            <form th:action="@{/logout}"
+                  method="post"
+                  class="m-0">
+
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}">
+
+                <button type="submit"
+                        class="assign-logout">
+                    Logout
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</nav>
+
+<main class="assign-page">
+
+    <div class="assign-heading">
+
+        <h1>
+            Assign Team Member
+        </h1>
+
+        <p class="event-name"
+           th:text="${event.name}">
+            Event Name
+        </p>
+
+    </div>
+
+    <div class="assign-card">
+
+        <h2>
+            Add a member to this event
+        </h2>
+
+        <p class="assign-description">
+            Select an existing team member who should be able to upload photos for this event.
+        </p>
+
+        <form th:action="@{/admin/event/{id}/assign(id=${event.id})}"
+              method="post"
+              class="assign-form">
+
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+
+            <div class="member-field">
+
+                <label for="userId">
+                    Team Member
+                </label>
+
+                <select id="userId"
+                        name="userId"
+                        required>
+
+                    <option value="">
+                        -- Select Team Member --
+                    </option>
+
+                    <option th:each="member : ${teamMembers}"
+                            th:value="${member.id}"
+                            th:text="${member.username}">
+                    </option>
+
+                </select>
+
+            </div>
+
+            <button type="submit"
+                    class="assign-button">
+                Assign Member
+            </button>
+
+        </form>
+
+        <div class="add-member-section">
+
+            <p class="add-member-text">
+                Need to create a new team member account?
+            </p>
+
+            <a th:href="@{/admin/add-team-member}"
+               class="add-member-button">
+                + Add Team Member
+            </a>
+
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+</html>

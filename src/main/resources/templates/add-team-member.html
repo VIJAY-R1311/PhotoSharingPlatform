@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Add Team Member | PhotoShare</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+
+    <style>
+
+        .member-page {
+            max-width: 800px;
+            margin: auto;
+            padding: 25px 20px 40px;
+        }
+
+        .member-header {
+            margin: 20px 0 25px;
+        }
+
+        .member-header h1 {
+            margin: 0;
+            font-size: 28px;
+            color: #0f172a;
+        }
+
+        .member-header p {
+            margin: 5px 0 0;
+            color: #64748b;
+        }
+
+        .member-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, .05);
+        }
+
+        .member-card h2 {
+            margin: 0 0 5px;
+            font-size: 20px;
+            color: #0f172a;
+        }
+
+        .description {
+            color: #64748b;
+            margin-bottom: 22px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, .12);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 22px;
+        }
+
+        .create-button {
+            border: none;
+            background: #4f46e5;
+            color: white;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-weight: 600;
+        }
+
+        .create-button:hover {
+            background: #4338ca;
+        }
+
+        .cancel-button {
+            background: #f1f5f9;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .cancel-button:hover {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .alert-success-custom {
+            margin-bottom: 18px;
+        }
+
+        .alert-danger-custom {
+            margin-bottom: 18px;
+        }
+
+        @media (max-width: 550px) {
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .create-button,
+            .cancel-button {
+                width: 100%;
+                text-align: center;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<nav class="navbar app-navbar">
+
+    <div class="container d-flex justify-content-between align-items-center">
+
+        <a class="brand"
+           th:href="@{/admin/dashboard}">
+            📸 PhotoShare
+        </a>
+
+
+        <div class="d-flex align-items-center gap-3">
+
+            <a class="nav-link"
+               th:href="@{/admin/dashboard}">
+                ← Dashboard
+            </a>
+
+
+            <form th:action="@{/logout}"
+                  method="post"
+                  class="m-0">
+
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}">
+
+                <button type="submit"
+                        class="btn btn-outline-light btn-sm">
+                    Logout
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<main class="member-page">
+
+
+    <div class="member-header">
+
+        <h1>
+            Add Team Member
+        </h1>
+
+        <p>
+            Create an account for a team member who can upload event photos.
+        </p>
+
+    </div>
+
+
+    <!-- SUCCESS MESSAGE -->
+
+    <div th:if="${successMessage}"
+         class="alert-success-custom"
+         th:text="${successMessage}">
+        Team member created successfully.
+    </div>
+
+
+    <!-- ERROR MESSAGE -->
+
+    <div th:if="${errorMessage}"
+         class="alert-danger-custom"
+         th:text="${errorMessage}">
+        Unable to create team member.
+    </div>
+
+
+    <div class="member-card">
+
+        <h2>
+            Team Member Details
+        </h2>
+
+        <p class="description">
+            Enter the login details for the new team member.
+        </p>
+
+
+        <form th:action="@{/admin/add-team-member}"
+              method="post">
+
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}">
+
+
+            <div class="form-group">
+
+                <label for="username">
+                    Username
+                </label>
+
+                <input type="text"
+                       id="username"
+                       name="username"
+                       placeholder="Enter username"
+                       required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="email">
+                    Email
+                </label>
+
+                <input type="email"
+                       id="email"
+                       name="email"
+                       placeholder="Enter email address"
+                       required>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <input type="password"
+                       id="password"
+                       name="password"
+                       placeholder="Create password"
+                       required>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <a th:href="@{/admin/dashboard}"
+                   class="cancel-button">
+                    Cancel
+                </a>
+
+                <button type="submit"
+                        class="create-button">
+                    Create Team Member
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</main>
+
+</body>
+
+</html>

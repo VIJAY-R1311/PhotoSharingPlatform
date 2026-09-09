@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Post - Photo Sharing</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background: #222;
+            padding: 15px 30px;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+        .container {
+            width: 600px;
+            max-width: 90%;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        textarea {
+            height: 150px;
+            resize: vertical;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 12px;
+            background: #222;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #444;
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 15px;
+            text-align: center;
+            color: #333;
+            text-decoration: none;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<nav class="navbar">
+
+    <a href="/home">Home</a>
+
+</nav>
+
+
+<div class="container">
+
+    <h2>Create a New Post</h2>
+
+    <form th:action="@{/create-post}"
+          th:object="${post}"
+          method="post">
+
+        <label for="title">Title</label>
+
+        <input
+                type="text"
+                id="title"
+                th:field="*{title}"
+                placeholder="Enter post title"
+                required>
+
+
+        <label for="description">Description</label>
+
+        <textarea
+                id="description"
+                th:field="*{description}"
+                placeholder="Write something about your photo..."
+                required></textarea>
+
+
+        <label for="imageUrl">Image URL</label>
+
+        <input
+                type="url"
+                id="imageUrl"
+                th:field="*{imageUrl}"
+                placeholder="https://example.com/photo.jpg">
+
+
+        <button type="submit">
+            Publish Post
+        </button>
+
+    </form>
+
+
+    <a href="/home" class="back-link">
+        ← Back to Home
+    </a>
+
+</div>
+
+</body>
+
+</html>
